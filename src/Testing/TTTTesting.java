@@ -5,7 +5,7 @@ import Models.*;
 import java.util.function.Supplier;
 
 public class TTTTesting implements Testing {
-    private TTTGameboard gameboard;
+    private final TTTGameboard gameboard;
 
     public TTTTesting() {
         gameboard = new TTTGameboard(3);
@@ -85,16 +85,16 @@ public class TTTTesting implements Testing {
     @Override
     public void showBoard() {
         TTTTile[][] board = gameboard.getBoardState();
-        String output = "";
+        StringBuilder output = new StringBuilder();
 
         for (int i = 0; i < gameboard.getSize(); i++) {
             for (int j = 0; j < gameboard.getSize(); j++) {
-                output += board[i][j].getPiece().toString();
+                output.append(board[i][j].getPiece().toString());
                 if (j != gameboard.getSize() - 1) {
-                    output += ", ";
+                    output.append(", ");
                 }
             }
-            output += "\n";
+            output.append("\n");
         }
         System.out.println(output);
     }
@@ -105,23 +105,20 @@ public class TTTTesting implements Testing {
         Gamepieces g = tile.getPiece();
         tile.changePiece(Gamepieces.O);
         TTTTile[][] target = tile.getNeighborArray();
-        String output = "";
+        StringBuilder output = new StringBuilder();
 
-        for (int y_ = 0; y_ < target.length; y_++) {
+        for (TTTTile[] tttTiles : target) {
             for (int x_ = 0; x_ < target.length; x_++) {
-                if (target[y_][x_] != null) {
-                    output += target[y_][x_].getPiece().toString();
-                    if (x_ != target.length - 1) {
-                        output += ", ";
-                    }
-                }else {
-                    output += "-";
-                    if (x_ != target.length - 1) {
-                        output += ", ";
-                    }
+                if (tttTiles[x_] != null) {
+                    output.append(tttTiles[x_].getPiece().toString());
+                } else {
+                    output.append("-");
+                }
+                if (x_ != target.length - 1) {
+                    output.append(", ");
                 }
             }
-            output += "\n";
+            output.append("\n");
         }
         System.out.println(output);
         tile.changePiece(g);

@@ -4,7 +4,7 @@ public class TTTGameboard implements GameBoard {
 
     private Gamestates gamestate;
     private TTTTile[][] tiles;
-    private int size;
+    private final int size;
 
     public TTTGameboard(int n) {
         size = n;
@@ -161,7 +161,7 @@ public class TTTGameboard implements GameBoard {
             t = n;
             counter++;
         }
-        ////  gets the inverse value
+        //  gets the inverse value
         int x_ = ((x-1)*-1)+1;
         int y_ = ((y-1)*-1)+1;
         while (t.getNeighbor(x_, y_) != null) {
