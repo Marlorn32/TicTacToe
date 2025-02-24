@@ -1,8 +1,8 @@
 package Models;
 
-public class TTTTile {
+public class TTTTile implements Tile {
     private Boolean occupied;
-    private TTTTile[][] neighbors;
+    private Tile[][] neighbors;
     private Gamepieces piece;
 
     public TTTTile(){
@@ -23,7 +23,7 @@ public class TTTTile {
     // centered at 0,0 shifted by -1,-1
     // x and y come in at 0,0 to 2,2
     // only currently supports directly adjacent neighbors
-    public void addNeighbor(TTTTile target, int x, int y){
+    public void addNeighbor(Tile target, int x, int y){
         if (neighbors[x][y] == null){
             neighbors[x][y] = target;
             int x_ = ((x-1)*-1)+1;
@@ -41,15 +41,16 @@ public class TTTTile {
         return piece;
     }
 
-    public TTTTile[][] getNeighborArray() {
+    public Tile[][] getNeighborArray() {
         return neighbors;
     }
 
-    public TTTTile getNeighbor(int x, int y) {
+    public Tile getNeighbor(int x, int y) {
         return neighbors[y][x];
     }
 
-    public Boolean getOccupied() {
+    public boolean isOccupied() {
         return occupied;
     }
+
 }

@@ -5,7 +5,7 @@ public interface GameBoard {
     Gamestates getGameState();
     void updateGameState();
     // gets current board state
-    Object getBoardState();
+    Tile[][] getBoardState();
     void updateBoardState(Gamepieces piece, int x, int y);
     int getSize();
 }

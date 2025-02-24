@@ -5,7 +5,7 @@ import Models.*;
 import java.util.function.Supplier;
 
 public class TTTTesting implements Testing {
-    private final TTTGameboard gameboard;
+    private final GameBoard gameboard;
 
     public TTTTesting() {
         gameboard = new TTTGameboard(3);

@@ -3,7 +3,7 @@ package Models;
 public class TTTGameboard implements GameBoard {
 
     private Gamestates gamestate;
-    private TTTTile[][] tiles;
+    private Tile[][] tiles;
     private final int size;
 
     public TTTGameboard(int n) {
@@ -57,7 +57,7 @@ public class TTTGameboard implements GameBoard {
     }
 
     @Override
-    public TTTTile[][] getBoardState() {
+    public Tile[][] getBoardState() {
         return tiles;
     }
 
@@ -85,8 +85,8 @@ public class TTTGameboard implements GameBoard {
         boolean o_wins = false;
 
         // upper corner
-        TTTTile u = tiles[0][0];
-        if (u.getOccupied()) {
+        Tile u = tiles[0][0];
+        if (u.isOccupied()) {
             if (isSameTokensDiagonal(u,2,2) ||
             isSameTokensDiagonal(u, 2,1) ||
             isSameTokensDiagonal(u, 1,2)) {
@@ -99,8 +99,8 @@ public class TTTGameboard implements GameBoard {
         }
 
         // bottom corner / diagonal
-        TTTTile b = tiles[2][0];
-        if (b.getOccupied()) {
+        Tile b = tiles[2][0];
+        if (b.isOccupied()) {
             if (isSameTokensDiagonal(b,2,0)) {
                 if (b.getPiece() == Gamepieces.X) {
                     x_wins = true;
@@ -111,8 +111,8 @@ public class TTTGameboard implements GameBoard {
         }
 
         for (int x = 0; x < size; x++) {
-            TTTTile t = tiles[0][x];
-            if (t.getOccupied()) {
+            Tile t = tiles[0][x];
+            if (t.isOccupied()) {
                 if (isSameTokensDiagonal(t, 1,2)) {
                     if (t.getPiece() == Gamepieces.X) {
                         x_wins = true;
@@ -124,8 +124,8 @@ public class TTTGameboard implements GameBoard {
         }
 
         for (int y = 0; y < size; y++) {
-            TTTTile t = tiles[y][0];
-            if (t.getOccupied()) {
+            Tile t = tiles[y][0];
+            if (t.isOccupied()) {
                 if (isSameTokensDiagonal(t, 2, 1)) {
                     if (t.getPiece() == Gamepieces.X) {
                         x_wins = true;
@@ -149,11 +149,11 @@ public class TTTGameboard implements GameBoard {
     }
 
     // takes a tile and a direction and confirms if all of the tiles have the same token on that diagonal
-    private boolean isSameTokensDiagonal(TTTTile t, int x, int y) {
+    private boolean isSameTokensDiagonal(Tile t, int x, int y) {
         boolean result = true;
         int counter = 1;
         while (t.getNeighbor(x, y) != null) {
-            TTTTile n = t.getNeighbor(x, y);
+            Tile n = t.getNeighbor(x, y);
             if (n.getPiece() != t.getPiece()) {
                 result = false;
                 break;
@@ -165,7 +165,7 @@ public class TTTGameboard implements GameBoard {
         int x_ = ((x-1)*-1)+1;
         int y_ = ((y-1)*-1)+1;
         while (t.getNeighbor(x_, y_) != null) {
-            TTTTile n = t.getNeighbor(x_, y_);
+            Tile n = t.getNeighbor(x_, y_);
             if (n.getPiece() != t.getPiece()) {
                 result = false;
                 break;
