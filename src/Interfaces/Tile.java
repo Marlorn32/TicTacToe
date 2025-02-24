@@ -1,4 +1,6 @@
-package Models;
+package Interfaces;
+
+import Enums.Gamepieces;
 
 public interface Tile {
     void addNeighbor(Tile target, int x, int y);
@@ -8,4 +10,6 @@ public interface Tile {
     Gamepieces getPiece();
     void changePiece(Gamepieces newPiece);
     void reset();
+    int getX();
+    int getY();
 }

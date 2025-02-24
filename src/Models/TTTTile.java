@@ -1,21 +1,22 @@
 package Models;
 
+import Enums.Gamepieces;
+import Interfaces.Tile;
+
 public class TTTTile implements Tile {
     private Boolean occupied;
     private Tile[][] neighbors;
     private Gamepieces piece;
+    private final int x;
+    private final int y;
 
-    public TTTTile(){
+    public TTTTile(int x, int y){
         occupied = false;
         piece = Gamepieces.E;
         neighbors = new TTTTile[3][3];
         neighbors[1][1] = this;
-    }
-
-    public TTTTile(Gamepieces newPiece){
-        new TTTTile();
-        piece = newPiece;
-        occupied = true;
+        this.x = x;
+        this.y = y;
     }
 
     // adds a neighbor if available, if null nothing happens
@@ -61,4 +62,11 @@ public class TTTTile implements Tile {
         return occupied;
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
 }

@@ -1,20 +1,34 @@
 package Models;
 
+import Enums.Gamepieces;
+import Enums.Gamestates;
+import Interfaces.GameBoard;
+import Interfaces.Tile;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+
 public class TTTGameboard implements GameBoard {
 
     private Gamestates gamestate;
-    private Tile[][] tiles;
+    private final Tile[][] tiles;
     private final int size;
+    private int turn;
+    private List<Tile> unchosenTiles;
 
     public TTTGameboard(int n) {
         size = n;
         gamestate = Gamestates.Ongoing;
+        unchosenTiles = new ArrayList<>(size*size);
+        turn = 0;
 
         // tiles
         tiles = new TTTTile[n][n];
         for (int y = 0; y < tiles.length; y++) {
             for (int x = 0; x < tiles.length; x++) {
-                TTTTile temp = new TTTTile();
+                TTTTile temp = new TTTTile(x,y);
                 // Previous
                 if (x > 0) {
                     temp.addNeighbor(tiles[y][x - 1], 0, 1);
@@ -30,6 +44,7 @@ public class TTTGameboard implements GameBoard {
                     temp.addNeighbor(tiles[y - 1][x + 1], 2, 0);
                 }
                 tiles[y][x] = temp;
+                unchosenTiles.add(temp);
             }
         }
     }
@@ -42,17 +57,26 @@ public class TTTGameboard implements GameBoard {
     @Override
     public void updateGameState() {
         int outcome = win();
-        if (outcome == -1) {
-            gamestate = Gamestates.Ongoing;
-        }
-        if (outcome == -2) {
-            gamestate = Gamestates.Error;
-        }
-        if (outcome == 0) {
-            gamestate = Gamestates.Defeat;
-        }
-        if (outcome == 1) {
-            gamestate = Gamestates.Victory;
+        switch (outcome) {
+            case -1:
+                gamestate = Gamestates.Ongoing;
+                if (turn >= 8) {
+                    gamestate = Gamestates.Error;
+                }
+                break;
+            case -2:
+                gamestate = Gamestates.Error;
+                break;
+            case 0:
+                gamestate = Gamestates.Defeat;
+                break;
+            case 1:
+                gamestate = Gamestates.Victory;
+                break;
+            default:
+                // Optionally handle an unexpected outcome (though this should not happen if outcome is -1, -2, 0, or 1)
+                gamestate = Gamestates.Error;
+                break;
         }
     }
 
@@ -63,15 +87,19 @@ public class TTTGameboard implements GameBoard {
 
     // places the piece on a square
     @Override
-    public void updateBoardState(Gamepieces piece, int x, int y) {
+    public boolean updateBoardState(Gamepieces piece, int x, int y) {
         if (x > size-1 || x < 0){
             throw new RuntimeException("X with value: "+ y +", is out of bounds for size: " + size);
         }
         if (y > size-1 || y < 0){
             throw new RuntimeException("Y with value: "+ y +", is out of bounds for size: " + size);
         }
+        if (tiles[y][x].isOccupied()){return false;}
         tiles[y][x].changePiece(piece);
         updateGameState();
+        turn++;
+        unchosenTiles.removeIf(z -> z.getX() == x && z.getY() == y);
+        return true;
     }
 
     @Override
@@ -81,13 +109,22 @@ public class TTTGameboard implements GameBoard {
 
     @Override
     public void resetBoard() {
-        for (Tile[] ts : tiles) {
-            for (Tile t : ts){
-                t.reset();
-            }
-        }
+        Stream<Tile> tileStream = Arrays.stream(tiles).flatMap(Arrays::stream);
+        tileStream.forEach(Tile::reset);
         gamestate = Gamestates.Ongoing;
+        turn = 0;
     }
+
+    @Override
+    public int getTurn() {
+        return turn;
+    }
+
+    @Override
+    public List<Tile> getUnchosenTiles() {
+        return unchosenTiles;
+    }
+
 
     // returns 0 if o wins, returns 1 if x wins, returns -1 if no one wins, returns -2 if both win
     private int win() {
