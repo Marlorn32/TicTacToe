@@ -79,6 +79,16 @@ public class TTTGameboard implements GameBoard {
         return size;
     }
 
+    @Override
+    public void resetBoard() {
+        for (Tile[] ts : tiles) {
+            for (Tile t : ts){
+                t.reset();
+            }
+        }
+        gamestate = Gamestates.Ongoing;
+    }
+
     // returns 0 if o wins, returns 1 if x wins, returns -1 if no one wins, returns -2 if both win
     private int win() {
         boolean x_wins = false;
@@ -87,9 +97,9 @@ public class TTTGameboard implements GameBoard {
         // upper corner
         Tile u = tiles[0][0];
         if (u.isOccupied()) {
-            if (isSameTokensDiagonal(u,2,2) ||
-            isSameTokensDiagonal(u, 2,1) ||
-            isSameTokensDiagonal(u, 1,2)) {
+            if (isSameTokensLine(u,2,2) ||
+            isSameTokensLine(u, 2,1) ||
+            isSameTokensLine(u, 1,2)) {
                 if (u.getPiece() == Gamepieces.X) {
                     x_wins = true;
                 } else if (u.getPiece() == Gamepieces.O) {
@@ -101,7 +111,7 @@ public class TTTGameboard implements GameBoard {
         // bottom corner / diagonal
         Tile b = tiles[2][0];
         if (b.isOccupied()) {
-            if (isSameTokensDiagonal(b,2,0)) {
+            if (isSameTokensLine(b,2,0)) {
                 if (b.getPiece() == Gamepieces.X) {
                     x_wins = true;
                 } else if (b.getPiece() == Gamepieces.O) {
@@ -113,7 +123,7 @@ public class TTTGameboard implements GameBoard {
         for (int x = 0; x < size; x++) {
             Tile t = tiles[0][x];
             if (t.isOccupied()) {
-                if (isSameTokensDiagonal(t, 1,2)) {
+                if (isSameTokensLine(t, 1,2)) {
                     if (t.getPiece() == Gamepieces.X) {
                         x_wins = true;
                     } else if (t.getPiece() == Gamepieces.O) {
@@ -126,7 +136,7 @@ public class TTTGameboard implements GameBoard {
         for (int y = 0; y < size; y++) {
             Tile t = tiles[y][0];
             if (t.isOccupied()) {
-                if (isSameTokensDiagonal(t, 2, 1)) {
+                if (isSameTokensLine(t, 2, 1)) {
                     if (t.getPiece() == Gamepieces.X) {
                         x_wins = true;
                     } else if (t.getPiece() == Gamepieces.O) {
@@ -149,32 +159,36 @@ public class TTTGameboard implements GameBoard {
     }
 
     // takes a tile and a direction and confirms if all of the tiles have the same token on that diagonal
-    private boolean isSameTokensDiagonal(Tile t, int x, int y) {
-        boolean result = true;
+    private boolean isSameTokensLine(Tile t, int x, int y) {
+        if (!t.isOccupied()) return false;
+
+        Gamepieces piece = t.getPiece();
+        Tile start = t;  // Store original tile
+
         int counter = 1;
+
+        // First direction
         while (t.getNeighbor(x, y) != null) {
             Tile n = t.getNeighbor(x, y);
-            if (n.getPiece() != t.getPiece()) {
-                result = false;
-                break;
-            }
-            t = n;
-            counter++;
-        }
-        //  gets the inverse value
-        int x_ = ((x-1)*-1)+1;
-        int y_ = ((y-1)*-1)+1;
-        while (t.getNeighbor(x_, y_) != null) {
-            Tile n = t.getNeighbor(x_, y_);
-            if (n.getPiece() != t.getPiece()) {
-                result = false;
-                break;
-            }
+            if (n.getPiece() != piece) return false;  // Break immediately if mismatch
             t = n;
             counter++;
         }
 
-        if (counter != size){result = false;}
-        return result;
+        // Reset tile to original
+        t = start;
+
+        // Opposite direction
+        int x_ = ((x - 1) * -1) + 1;
+        int y_ = ((y - 1) * -1) + 1;
+
+        while (t.getNeighbor(x_, y_) != null) {
+            Tile n = t.getNeighbor(x_, y_);
+            if (n.getPiece() != piece) return false;
+            t = n;
+            counter++;
+        }
+
+        return counter == size;  // Must exactly match board size
     }
 }

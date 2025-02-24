@@ -7,4 +7,5 @@ public interface Tile {
     boolean isOccupied();
     Gamepieces getPiece();
     void changePiece(Gamepieces newPiece);
+    void reset();
 }

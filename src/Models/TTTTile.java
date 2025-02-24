@@ -24,8 +24,8 @@ public class TTTTile implements Tile {
     // x and y come in at 0,0 to 2,2
     // only currently supports directly adjacent neighbors
     public void addNeighbor(Tile target, int x, int y){
-        if (neighbors[x][y] == null){
-            neighbors[x][y] = target;
+        if (neighbors[y][x] == null){
+            neighbors[y][x] = target;
             int x_ = ((x-1)*-1)+1;
             int y_ = ((y-1)*-1)+1;
             target.addNeighbor(this, x_, y_);
@@ -35,6 +35,14 @@ public class TTTTile implements Tile {
     public void changePiece(Gamepieces newPiece){
         piece = newPiece;
         occupied = true;
+    }
+
+    @Override
+    public void reset() {
+        occupied = false;
+        piece = Gamepieces.E;
+        neighbors = new TTTTile[3][3];
+        neighbors[1][1] = this;
     }
 
     public Gamepieces getPiece(){

@@ -13,9 +13,9 @@ public class TTTTesting implements Testing {
 
     @Override
     public int runTests() {
-        //tileUnitTests();
+        tileUnitTests();
         //adjacencyTests();
-        boardTests();
+        //boardTests();
         return 1;
     }
 
@@ -42,6 +42,10 @@ public class TTTTesting implements Testing {
     private void tileUnitTests(){
         unitTest(gameboard::getBoardState, null);
         unitTest(gameboard::getGameState, Gamestates.Ongoing);
+
+        Tile t = gameboard.getBoardState()[0][0];
+        gameboard.updateBoardState(Gamepieces.X, 0,1);
+        System.out.println(t.getNeighbor(2,1).getPiece());
     }
 
     private void boardTests(){
@@ -69,11 +73,11 @@ public class TTTTesting implements Testing {
         System.out.println(gameboard.getGameState());
         showBoard();
 
-        gameboard.updateBoardState(Gamepieces.O, 0,2);
+        gameboard.updateBoardState(Gamepieces.O, 2,2);
         System.out.println(gameboard.getGameState());
         showBoard();
 
-        gameboard.updateBoardState(Gamepieces.O, 0,1);
+        gameboard.updateBoardState(Gamepieces.O, 1,1);
         System.out.println(gameboard.getGameState());
         showBoard();
 

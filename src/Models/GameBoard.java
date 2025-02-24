@@ -8,4 +8,5 @@ public interface GameBoard {
     Tile[][] getBoardState();
     void updateBoardState(Gamepieces piece, int x, int y);
     int getSize();
+    void resetBoard();
 }
