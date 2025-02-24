@@ -84,7 +84,7 @@ public class TTTTesting implements Testing {
 
     @Override
     public void showBoard() {
-        TTTTile[][] board = gameboard.getBoardState();
+        Tile[][] board = gameboard.getBoardState();
         StringBuilder output = new StringBuilder();
 
         for (int i = 0; i < gameboard.getSize(); i++) {
@@ -100,14 +100,14 @@ public class TTTTesting implements Testing {
     }
 
     private void printAdjacency(int x, int y){
-        TTTTile[][] t = gameboard.getBoardState();
-        TTTTile tile = t[y][x];
+        Tile[][] t = gameboard.getBoardState();
+        Tile tile = t[y][x];
         Gamepieces g = tile.getPiece();
         tile.changePiece(Gamepieces.O);
-        TTTTile[][] target = tile.getNeighborArray();
+        Tile[][] target = tile.getNeighborArray();
         StringBuilder output = new StringBuilder();
 
-        for (TTTTile[] tttTiles : target) {
+        for (Tile[] tttTiles : target) {
             for (int x_ = 0; x_ < target.length; x_++) {
                 if (tttTiles[x_] != null) {
                     output.append(tttTiles[x_].getPiece().toString());
