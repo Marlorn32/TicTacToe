@@ -38,7 +38,6 @@ public class TTTTile implements Tile {
         occupied = true;
     }
 
-    @Override
     public void reset() {
         occupied = false;
         piece = Gamepieces.E;

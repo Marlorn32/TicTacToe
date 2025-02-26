@@ -8,8 +8,7 @@ import Interfaces.Tile;
 import java.util.List;
 import java.util.Random;
 
-public class TTTAgent implements Agent {
-    @Override
+public class TTTAgentRandom implements Agent {
     public Tile playMove(GameBoard board) {
         Random r = new Random();
         List<Tile> tiles = board.getUnchosenTiles();

@@ -49,12 +49,10 @@ public class TTTGameboard implements GameBoard {
         }
     }
 
-    @Override
     public Gamestates getGameState() {
         return gamestate;
     }
 
-    @Override
     public void updateGameState() {
         int outcome = win();
         switch (outcome) {
@@ -80,13 +78,11 @@ public class TTTGameboard implements GameBoard {
         }
     }
 
-    @Override
     public Tile[][] getBoardState() {
         return tiles;
     }
 
     // places the piece on a square
-    @Override
     public boolean updateBoardState(Gamepieces piece, int x, int y) {
         if (x > size-1 || x < 0){
             throw new RuntimeException("X with value: "+ y +", is out of bounds for size: " + size);
@@ -102,12 +98,10 @@ public class TTTGameboard implements GameBoard {
         return true;
     }
 
-    @Override
     public int getSize() {
         return size;
     }
 
-    @Override
     public void resetBoard() {
         Stream<Tile> tileStream = Arrays.stream(tiles).flatMap(Arrays::stream);
         tileStream.forEach(Tile::reset);
@@ -115,16 +109,13 @@ public class TTTGameboard implements GameBoard {
         turn = 0;
     }
 
-    @Override
     public int getTurn() {
         return turn;
     }
 
-    @Override
     public List<Tile> getUnchosenTiles() {
         return unchosenTiles;
     }
-
 
     // returns 0 if o wins, returns 1 if x wins, returns -1 if no one wins, returns -2 if both win
     private int win() {
