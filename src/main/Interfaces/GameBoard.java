@@ -1,7 +1,7 @@
-package Interfaces;
+package main.Interfaces;
 
-import Enums.Gamepieces;
-import Enums.Gamestates;
+import main.Enums.Gamepieces;
+import main.Enums.Gamestates;
 
 import java.util.List;
 

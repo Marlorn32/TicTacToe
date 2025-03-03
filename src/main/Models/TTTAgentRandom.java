@@ -1,9 +1,9 @@
-package Models;
+package main.Models;
 
-import Enums.Gamepieces;
-import Interfaces.Agent;
-import Interfaces.GameBoard;
-import Interfaces.Tile;
+import main.Enums.Gamepieces;
+import main.Interfaces.Agent;
+import main.Interfaces.GameBoard;
+import main.Interfaces.Tile;
 
 import java.util.List;
 import java.util.Random;

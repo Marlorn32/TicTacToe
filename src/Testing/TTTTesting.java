@@ -1,10 +1,11 @@
 package Testing;
 
-import Enums.Gamepieces;
-import Enums.Gamestates;
-import Interfaces.GameBoard;
-import Interfaces.Tile;
-import Models.*;
+import main.Enums.Gamepieces;
+import main.Enums.Gamestates;
+import main.Interfaces.GameBoard;
+import main.Interfaces.Testing;
+import main.Interfaces.Tile;
+import main.Models.TTTGameboard;
 
 import java.util.function.Supplier;
 
@@ -49,7 +50,7 @@ public class TTTTesting implements Testing {
 
         Tile t = gameboard.getBoardState()[0][0];
         gameboard.updateBoardState(Gamepieces.X, 0,1);
-        System.out.println(t.getNeighbor(2,1).getPiece());
+        System.out.println(t.getNeighbor(1,0).getPiece());
     }
 
     private void boardTests(){
@@ -111,7 +112,6 @@ public class TTTTesting implements Testing {
         Tile[][] t = gameboard.getBoardState();
         Tile tile = t[y][x];
         Gamepieces g = tile.getPiece();
-        tile.changePiece(Gamepieces.O);
         Tile[][] target = tile.getNeighborArray();
         StringBuilder output = new StringBuilder();
 
@@ -129,7 +129,6 @@ public class TTTTesting implements Testing {
             output.append("\n");
         }
         System.out.println(output);
-        tile.changePiece(g);
     }
 
     public boolean unitTest(Supplier<Object> testing, Object expected) {

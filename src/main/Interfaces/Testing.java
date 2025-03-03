@@ -1,4 +1,4 @@
-package Testing;
+package main.Interfaces;
 
 public interface Testing {
     int runTests();

@@ -1,9 +1,9 @@
-package Models;
+package main.Models;
 
-import Enums.Gamepieces;
-import Enums.Gamestates;
-import Interfaces.GameBoard;
-import Interfaces.Tile;
+import main.Enums.Gamepieces;
+import main.Enums.Gamestates;
+import main.Interfaces.GameBoard;
+import main.Interfaces.Tile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,40 +13,38 @@ import java.util.stream.Stream;
 public class TTTGameboard implements GameBoard {
 
     private Gamestates gamestate;
-    private final Tile[][] tiles;
-    private final int size;
+    private Tile[][] tiles;
+    private int size;
     private int turn;
     private List<Tile> unchosenTiles;
 
     public TTTGameboard(int n) {
         size = n;
-        gamestate = Gamestates.Ongoing;
-        unchosenTiles = new ArrayList<>(size*size);
         turn = 0;
+        gamestate = Gamestates.Ongoing;
+        tiles = new TTTTileArray(n).getTiles();
+        unchosenTiles = new ArrayList<>(size * size);
+        Arrays.stream(tiles).flatMap(Arrays::stream).forEach(tile -> unchosenTiles.addLast(tile));
+    }
 
-        // tiles
-        tiles = new TTTTile[n][n];
-        for (int y = 0; y < tiles.length; y++) {
-            for (int x = 0; x < tiles.length; x++) {
-                TTTTile temp = new TTTTile(x,y);
-                // Previous
-                if (x > 0) {
-                    temp.addNeighbor(tiles[y][x - 1], 0, 1);
-                }
-                // Top row
-                if (y > 0 && x > 0) {
-                    temp.addNeighbor(tiles[y - 1][x - 1], 0, 0);
-                }
-                if (y > 0) {
-                    temp.addNeighbor(tiles[y - 1][x], 1, 0);
-                }
-                if (y > 0 && x < tiles.length - 1) {
-                    temp.addNeighbor(tiles[y - 1][x + 1], 2, 0);
-                }
-                tiles[y][x] = temp;
-                unchosenTiles.add(temp);
-            }
-        }
+    public TTTGameboard(TTTGameboard gameBoard) {
+        unchosenTiles = new ArrayList<Tile>();
+        gameBoard.getUnchosenTiles().forEach(tile -> unchosenTiles.addLast(tile));
+        size = gameBoard.getSize();
+        turn = gameBoard.getTurn();
+        gamestate = gameBoard.getGameState();
+        tiles = new TTTTileArray(size).getTiles();
+        Arrays.stream(gameBoard.getBoardState())
+                .forEach(tiles1 -> Arrays.stream(tiles1)
+                        .forEach(tile -> {
+                            if (tile.isOccupied()){
+                                tiles[tile.getY()][tile.getX()].playPiece(tile.getPiece());
+                            }
+                        }));
+    }
+
+    public TTTGameboard() {
+        new TTTGameboard(3);
     }
 
     public Gamestates getGameState() {
@@ -84,14 +82,16 @@ public class TTTGameboard implements GameBoard {
 
     // places the piece on a square
     public boolean updateBoardState(Gamepieces piece, int x, int y) {
-        if (x > size-1 || x < 0){
-            throw new RuntimeException("X with value: "+ y +", is out of bounds for size: " + size);
+        if (x > size - 1 || x < 0) {
+            throw new RuntimeException("X with value: " + x + ", is out of bounds for size: " + size);
         }
-        if (y > size-1 || y < 0){
-            throw new RuntimeException("Y with value: "+ y +", is out of bounds for size: " + size);
+        if (y > size - 1 || y < 0) {
+            throw new RuntimeException("Y with value: " + y + ", is out of bounds for size: " + size);
         }
-        if (tiles[y][x].isOccupied()){return false;}
-        tiles[y][x].changePiece(piece);
+        if (tiles[y][x].isOccupied()) {
+            return false;
+        }
+        tiles[y][x].playPiece(piece);
         updateGameState();
         turn++;
         unchosenTiles.removeIf(z -> z.getX() == x && z.getY() == y);
@@ -106,6 +106,8 @@ public class TTTGameboard implements GameBoard {
         Stream<Tile> tileStream = Arrays.stream(tiles).flatMap(Arrays::stream);
         tileStream.forEach(Tile::reset);
         gamestate = Gamestates.Ongoing;
+        Stream<Tile> tileStream2 = Arrays.stream(tiles).flatMap(Arrays::stream);
+        tileStream2.forEach(tile -> unchosenTiles.addLast(tile));
         turn = 0;
     }
 
@@ -125,9 +127,9 @@ public class TTTGameboard implements GameBoard {
         // upper corner
         Tile u = tiles[0][0];
         if (u.isOccupied()) {
-            if (isSameTokensLine(u,2,2) ||
-            isSameTokensLine(u, 2,1) ||
-            isSameTokensLine(u, 1,2)) {
+            if (isSameTokensLine(u, 1, 1) ||
+                    isSameTokensLine(u, 1, 0) ||
+                    isSameTokensLine(u, 0, 1)) {
                 if (u.getPiece() == Gamepieces.X) {
                     x_wins = true;
                 } else if (u.getPiece() == Gamepieces.O) {
@@ -139,7 +141,7 @@ public class TTTGameboard implements GameBoard {
         // bottom corner / diagonal
         Tile b = tiles[2][0];
         if (b.isOccupied()) {
-            if (isSameTokensLine(b,2,0)) {
+            if (isSameTokensLine(b, 1, -1)) {
                 if (b.getPiece() == Gamepieces.X) {
                     x_wins = true;
                 } else if (b.getPiece() == Gamepieces.O) {
@@ -148,10 +150,11 @@ public class TTTGameboard implements GameBoard {
             }
         }
 
+        // vertical
         for (int x = 0; x < size; x++) {
             Tile t = tiles[0][x];
             if (t.isOccupied()) {
-                if (isSameTokensLine(t, 1,2)) {
+                if (isSameTokensLine(t, 0, 1)) {
                     if (t.getPiece() == Gamepieces.X) {
                         x_wins = true;
                     } else if (t.getPiece() == Gamepieces.O) {
@@ -161,10 +164,11 @@ public class TTTGameboard implements GameBoard {
             }
         }
 
+        // horizontal
         for (int y = 0; y < size; y++) {
             Tile t = tiles[y][0];
             if (t.isOccupied()) {
-                if (isSameTokensLine(t, 2, 1)) {
+                if (isSameTokensLine(t, 1, 0)) {
                     if (t.getPiece() == Gamepieces.X) {
                         x_wins = true;
                     } else if (t.getPiece() == Gamepieces.O) {
@@ -187,6 +191,7 @@ public class TTTGameboard implements GameBoard {
     }
 
     // takes a tile and a direction and confirms if all of the tiles have the same token on that diagonal
+    // uses relative values [-1,1]
     private boolean isSameTokensLine(Tile t, int x, int y) {
         if (!t.isOccupied()) return false;
 
@@ -207,8 +212,8 @@ public class TTTGameboard implements GameBoard {
         t = start;
 
         // Opposite direction
-        int x_ = ((x - 1) * -1) + 1;
-        int y_ = ((y - 1) * -1) + 1;
+        int x_ = -x;
+        int y_ = -y;
 
         while (t.getNeighbor(x_, y_) != null) {
             Tile n = t.getNeighbor(x_, y_);

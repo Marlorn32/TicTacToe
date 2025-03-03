@@ -1,11 +1,11 @@
-package Models;
+package main.Models;
 
-import Enums.Gamepieces;
-import Interfaces.Tile;
+import main.Enums.Gamepieces;
+import main.Interfaces.Tile;
 
 public class TTTTile implements Tile {
     private Boolean occupied;
-    private Tile[][] neighbors;
+    private final Tile[][] neighbors;
     private Gamepieces piece;
     private final int x;
     private final int y;
@@ -33,7 +33,7 @@ public class TTTTile implements Tile {
         }
     }
 
-    public void changePiece(Gamepieces newPiece){
+    public void playPiece(Gamepieces newPiece) {
         piece = newPiece;
         occupied = true;
     }
@@ -41,8 +41,6 @@ public class TTTTile implements Tile {
     public void reset() {
         occupied = false;
         piece = Gamepieces.E;
-        neighbors = new TTTTile[3][3];
-        neighbors[1][1] = this;
     }
 
     public Gamepieces getPiece(){
@@ -53,8 +51,10 @@ public class TTTTile implements Tile {
         return neighbors;
     }
 
+    // +1, to convert from relative to absolute
+    // [0,2]
     public Tile getNeighbor(int x, int y) {
-        return neighbors[y][x];
+        return neighbors[y+1][x+1];
     }
 
     public boolean isOccupied() {
